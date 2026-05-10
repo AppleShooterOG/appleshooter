@@ -13,9 +13,9 @@
     }
 
     body {
-        font-family: system-ui, Arial, sans-serif;
-        background: #0b0b0f;
-        color: #fff;
+        font-family: system-ui, -apple-system, Arial, sans-serif;
+        background: #050508;
+        color: #eaeaea;
         overflow: hidden;
     }
 
@@ -23,7 +23,16 @@
         position: fixed;
         inset: 0;
         z-index: -1;
-        opacity: 0.35;
+        opacity: 0.18;
+    }
+
+    /* subtle vignette */
+    body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(circle at center, transparent 40%, #000 100%);
+        pointer-events: none;
     }
 
     .wrap {
@@ -31,85 +40,74 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        text-align: center;
-        padding: 20px;
     }
 
     .card {
-        max-width: 600px;
-
-        /* fade-in start state */
+        width: 600px;
+        padding: 40px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(10,10,14,0.7);
+        backdrop-filter: blur(16px);
+        transform: translateY(10px);
         opacity: 0;
-        transform: translateY(20px);
-
-        /* animation */
-        animation: intro 1.2s ease forwards;
+        animation: fade 1s ease forwards;
     }
 
-    /* stagger effect */
-    .card h1 { animation-delay: 0.1s; }
-    .card p  { animation-delay: 0.2s; }
-    .buttons { animation-delay: 0.3s; }
-    .tag     { animation-delay: 0.4s; }
-
-    @keyframes intro {
+    @keyframes fade {
         to {
             opacity: 1;
             transform: translateY(0);
         }
     }
 
+    .tag {
+        font-size: 12px;
+        letter-spacing: 2px;
+        color: #777;
+        margin-bottom: 10px;
+    }
+
     h1 {
-        font-size: 64px;
+        font-size: 56px;
         font-weight: 700;
         letter-spacing: -2px;
+        margin-bottom: 10px;
     }
 
-    p {
-        margin-top: 12px;
+    .desc {
         color: #a1a1aa;
-        font-size: 16px;
+        font-size: 15px;
         line-height: 1.6;
+        max-width: 520px;
     }
 
-    .buttons {
-        margin-top: 30px;
+    .stats {
         display: flex;
-        gap: 12px;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    a {
-        text-decoration: none;
-        padding: 12px 22px;
-        border-radius: 10px;
-        font-size: 14px;
-        transition: 0.2s ease;
-    }
-
-    .primary {
-        background: white;
-        color: black;
-    }
-
-    .primary:hover {
-        transform: scale(1.04);
-    }
-
-    .ghost {
-        border: 1px solid #2a2a2a;
-        color: white;
-    }
-
-    .ghost:hover {
-        border-color: #555;
-    }
-
-    .tag {
-        margin-top: 15px;
+        gap: 20px;
+        margin-top: 25px;
         font-size: 12px;
         color: #666;
+    }
+
+    .btn {
+        display: inline-block;
+        margin-top: 30px;
+        padding: 12px 22px;
+        background: #fff;
+        color: #000;
+        text-decoration: none;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .footer {
+        margin-top: 18px;
+        font-size: 11px;
+        color: #555;
     }
 </style>
 </head>
@@ -120,19 +118,28 @@
 
 <div class="wrap">
     <div class="card">
+        <div class="tag">INDIE SKILL GAME</div>
+
         <h1>Apple Shooter</h1>
 
-        <p>
-             A FPS Game inspired by banana shooter, Developed by hisbeestolgoes. First game ever made
-        </p>
-
-        <div class="buttons">
-                <a class="primary" href="https://discord.gg/J4cRdWT7zR" target="_blank">
-        ▶ Play Game 
-            <a class="ghost" href="https://discord.gg/J4cRdWT7zR" target="_blank">Community</a>
+        <div class="desc">
+            A precision-based archery challenge where timing and aim define everything.
+            Simple mechanics. High skill ceiling. Pure focus gameplay.
         </div>
 
-        <div class="tag">Made with love by hisbeestolgoes</div>
+        <div class="stats">
+            <div>• skill based</div>
+            <div>• fast rounds</div>
+            <div>• minimal design</div>
+        </div>
+
+        <a class="btn" href="https://discord.gg/J4cRdWT7zR" target="_blank">
+            ▶ Launch Game
+        </a>
+
+        <div class="footer">
+            v1.0 • built for competitive precision
+        </div>
     </div>
 </div>
 
@@ -140,8 +147,8 @@
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 
 let apples = [];
 
@@ -149,12 +156,12 @@ function spawn() {
     apples.push({
         x: Math.random() * canvas.width,
         y: -20,
-        r: 10 + Math.random() * 10,
-        s: 0.5 + Math.random() * 1.5
+        s: 0.3 + Math.random() * 1.2,
+        r: 6 + Math.random() * 6
     });
 }
 
-setInterval(spawn, 700);
+setInterval(spawn, 800);
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -164,9 +171,11 @@ function draw() {
         a.y += a.s;
 
         ctx.beginPath();
-        ctx.fillStyle = "#ff4d4d";
+        ctx.fillStyle = "#ff3b3b";
+        ctx.globalAlpha = 0.7;
         ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
         ctx.fill();
+        ctx.globalAlpha = 1;
 
         if (a.y > canvas.height + 50) {
             apples.splice(i, 1);
@@ -180,8 +189,8 @@ function draw() {
 draw();
 
 window.addEventListener("resize", () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
 });
 </script>
 
